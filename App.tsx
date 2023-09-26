@@ -35,14 +35,15 @@ function App(): JSX.Element {
           }
         }}
       />
-         {/* <AppInput
+         <AppInput
         label="Password"
-        showBorder={true}
         activeBorder={password.error}
+        showBorder={password.value != "" ? true : false}
         onChangeText={text => {
           setPassword({...password, value: text});
           console.log(text);
         }}
+        value={password.value}
         onBlur={() => {
           if (!obj.regex.password.test(password.value)) {
             setEmail({...password, error: true});
@@ -52,7 +53,7 @@ function App(): JSX.Element {
              console.log("valid password")
           }
         }}
-      /> */}
+      />
     </View>
   );
 }

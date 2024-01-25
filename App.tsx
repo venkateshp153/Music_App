@@ -1,25 +1,16 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React from 'react';
+import React, {useState} from 'react';
+import DrawerNav from './src/navigation/DrawerNav';
+import {NavigationContainer} from '@react-navigation/native';
 import AuthStack from './src/navigation/AuthStack';
-import {
-  StyleSheet,
-  View,
-} from 'react-native';
-
 
 function App(): JSX.Element {
- 
+  // const [userToken, setUserToken] = useState('adeufxurf');
+  const [userToken, setUserToken] = useState(null);
   return (
-    <AuthStack/>
+    <NavigationContainer>
+      {userToken ? <DrawerNav /> : <AuthStack />}
+    </NavigationContainer>
   );
 }
-
-
 
 export default App;

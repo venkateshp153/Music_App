@@ -13,12 +13,13 @@ const BackButton = () => {
         width: '10%',
         alignItems: 'center',
         height: 30,
+        marginRight:10
       }}>
       <FontAwesome
-        name="angle-double-left"
+        name="angle-left"
         size={25}
         color={colors.appThemeColor}
-        style={{borderRadius: 30, alignSelf: 'center'}}
+        style={{borderRadius: 30}}
       />
     </TouchableOpacity>
   );

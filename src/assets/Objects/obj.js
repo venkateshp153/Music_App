@@ -1,8 +1,10 @@
 export const obj = {
   regex: {
-    email: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]/,
-    password: /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9].*[0-9])(?=.*[^a-zA-Z0-9]).{8,}/,
-    // phone: /^+?(?d{2,4})?[ds-]{3,}/g
+    email: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/ ,
+    password: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/ ,
+    phone: /^[0-9]{10}$/,
+    otp: /^[0-9]{4}$/ ,
+    username:/^[-\w\.\$@\*\!]{1,30}$/
   },
   Initial: {
     appName: 'Awesome',

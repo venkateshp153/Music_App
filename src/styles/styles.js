@@ -103,5 +103,11 @@ export const styles = StyleSheet.create({
   },
   linkStyle:{
     fontSize:13,color:colors.alert
-  }
+  },
+  btnPageTitle:{
+    flex:1,
+    flexDirection:"row",
+    alignItems:'center'
+  },
+
 });

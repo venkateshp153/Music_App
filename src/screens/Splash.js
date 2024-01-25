@@ -1,12 +1,17 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import {View, Text} from 'react-native';
+import React, {useEffect} from 'react';
 
-const Splash = () => {
+const Splash = ({navigation}) => {
+  useEffect(() => {
+    setTimeout(() => {
+      navigation.navigate('Parent');
+    }, 2000);
+  }, []);
   return (
     <View>
-      <Text>Splash</Text>
+      <Text>Loading..</Text>
     </View>
-  )
-}
+  );
+};
 
-export default Splash
+export default Splash;

@@ -50,7 +50,7 @@ const Initial = ({navigation}) => {
             width: 250,
           }}
           textStyle={{color: colors.primaryColor, fontSize: 13}}
-          onPress={() => navigation.navigate('Login', {name: 'Login'})}
+          onPress={() => navigation.navigate('SignIn', {name: 'SignIn'})}
         />
            <AppButton
           text="SIGNUP"
@@ -61,7 +61,7 @@ const Initial = ({navigation}) => {
             width: 250,
           }}
           textStyle={{color: colors.appThemeColor, fontSize: 13}}
-          onPress={() => navigation.navigate('SignIn', {name: 'SignIn'})}
+          onPress={() => navigation.navigate('SignUp', {name: 'SignUp'})}
         />
       </View>
     </ScrollView>

@@ -8,47 +8,59 @@ interface Props extends TextInputProps {
   activeBorder: Boolean;
   showBorder: Boolean;
   value: String;
-  inputIcon: String;
+  inputIcon: Any;
+  style: Any;
+  errorLabel: String;
 }
 
 const AppInput = (props: Props) => {
   return (
-    <>
+    <View style={{width: '95%', alignSelf: 'center', marginBottom: 5}}>
       {props.showLabel == true ? (
-        <View style={{left: 20, height: 20, width: '75%'}}>
-          <Text style={{color:colors.textColor}}>{props.label}</Text>
+        <View style={{left: 30, height: 20, width: '75%'}}>
+          <Text style={{color: colors.textColor}}>{props.label}</Text>
         </View>
       ) : (
         <></>
       )}
+
       <View
         style={{
           height: 40,
-          margin: 5,
-          paddingLeft:10,
+          margin: 2,
+          paddingLeft: 10,
           flexDirection: 'row',
           justifyContent: 'space-between',
           alignSelf: 'center',
-          width: '85%',
-          backgroundColor: '#E8EAE6',
+          width: '100%',
           borderBottomColor:
-            props.activeBorder == true ? colors.error : colors.success,
-          borderBottomWidth:
-            props.value != '' && props.showBorder == true ? 1 : 0,
-          borderRadius: 5,
+            props.activeBorder && props.showBorder ? 'red' : 'purple',
+          borderBottomWidth: 1,
+          ...props.style,
         }}>
-         {/* <View style={{flex: 0.1, alignSelf: 'center'}}>
+        <View
+          style={{
+            flex: 0.1,
+            alignSelf: 'center',
+            borderRightColor: 'black',
+            borderRightWidth: 1,
+            paddingRight: 5,
+          }}>
+          {props.inputIcon && (
             <Image
-              source={require('../assets/images/check.png')}
-              style={{width: 20, height: 20, alignSelf: 'center'}}
+              source={props.inputIcon}
+              style={{width: 20, height: 20, alignSelf: 'baseline'}}
             />
-          </View> */}
+          )}
+        </View>
+
         <View style={{flex: 0.9}}>
           <TextInput
             style={{
-              width:'90%',
+              width: '90%',
               height: 40,
               textAlign: 'left',
+              paddingLeft: 10,
               alignItems: 'center',
               color: '#000',
             }}
@@ -57,19 +69,11 @@ const AppInput = (props: Props) => {
             placeholderTextColor="#B4B4B3"
           />
         </View>
-      
-        {props.activeBorder != true && props.value != "" ? (
-          <View style={{flex: 0.1, alignSelf: 'center'}}>
-            <Image
-              source={require('../assets/images/check.png')}
-              style={{width: 12, height: 12, alignSelf: 'center'}}
-            />
-          </View> 
-        ) : (
-          < ></>
-        )}
       </View>
-    </>
+      <Text style={{color: colors.textColor, alignSelf: 'flex-end'}}>
+        {props.errorLabel}
+      </Text>
+    </View>
   );
 };
 

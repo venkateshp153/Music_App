@@ -28,3 +28,9 @@ export const obj = {
       'By SignIn/Login you agree to our Terms and Conditions and have read our Privacy policy',
   },
 };
+// { 
+//   "username":"Admin123",
+//   "email": "admin6@gmail.com",
+//   "password": "Admin6@123",
+//   "phone":"9988776655"
+// }

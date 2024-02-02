@@ -2,13 +2,16 @@ import React, {useState} from 'react';
 import DrawerNav from './src/navigation/DrawerNav';
 import {NavigationContainer} from '@react-navigation/native';
 import AuthStack from './src/navigation/AuthStack';
+import { useSelector } from 'react-redux';
 
-function App(): JSX.Element {
+function App(){
   // const [userToken, setUserToken] = useState('adeufxurf');
-  const [userToken, setUserToken] = useState(null);
+  // const [userToken, setUserToken] = useState(null);
+  const {userData} = useSelector(state => state.auth);
+  console.log("---->> userData",userData)
   return (
     <NavigationContainer>
-      {userToken ? <DrawerNav /> : <AuthStack />}
+      {userData ? <DrawerNav /> : <AuthStack />}
     </NavigationContainer>
   );
 }

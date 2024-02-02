@@ -17,7 +17,7 @@ const AppInput = (props: Props) => {
   return (
     <View style={{width: '95%', alignSelf: 'center', marginBottom: 5}}>
       {props.showLabel == true ? (
-        <View style={{left: 30, height: 20, width: '75%'}}>
+        <View style={{left: 10, height: 20, width: '75%'}}>
           <Text style={{color: colors.textColor}}>{props.label}</Text>
         </View>
       ) : (
@@ -34,7 +34,7 @@ const AppInput = (props: Props) => {
           alignSelf: 'center',
           width: '100%',
           borderBottomColor:
-            props.activeBorder && props.showBorder ? 'red' : 'purple',
+            props.activeBorder && props.showBorder ? colors.error : colors.appThemeColor,
           borderBottomWidth: 1,
           ...props.style,
         }}>
@@ -49,7 +49,7 @@ const AppInput = (props: Props) => {
           {props.inputIcon && (
             <Image
               source={props.inputIcon}
-              style={{width: 20, height: 20, alignSelf: 'baseline'}}
+              style={{width: 20, height: 20, alignSelf: 'center'}}
             />
           )}
         </View>
@@ -59,7 +59,7 @@ const AppInput = (props: Props) => {
             style={{
               width: '90%',
               height: 40,
-              textAlign: 'left',
+              textAlign:"left",
               paddingLeft: 10,
               alignItems: 'center',
               color: '#000',
@@ -70,7 +70,7 @@ const AppInput = (props: Props) => {
           />
         </View>
       </View>
-      <Text style={{color: colors.textColor, alignSelf: 'flex-end'}}>
+      <Text style={{color: colors.error, alignSelf: 'flex-end'}}>
         {props.errorLabel}
       </Text>
     </View>

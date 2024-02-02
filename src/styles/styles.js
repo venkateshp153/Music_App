@@ -1,5 +1,6 @@
 import {StyleSheet} from 'react-native';
 import {colors} from './colors';
+import {size} from './sizes';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -88,26 +89,27 @@ export const styles = StyleSheet.create({
   initial_login_signIn: {
     alignItems: 'center',
   },
-  appInputView:{
-    
-    alignItems:'center',
+  appInputView: {
+    alignItems: 'center',
   },
-  AppInput:{
-    borderColor:'lightgray',
-    borderWidth:1,
-    borderRadius:8,
-    width:'80%',
+  AppInput: {
+    borderColor: 'lightgray',
+    borderWidth: 1,
+    borderRadius: 8,
+    width: '80%',
   },
-  pageTitle:{
-     fontSize:30,color:colors.textColor,fontWeight:'bold'
+  pageTitle: {
+    fontSize: size.fontSize.large,
+    color: colors.textColor,
+    fontWeight: 'bold',
   },
-  linkStyle:{
-    fontSize:13,color:colors.alert
+  linkStyle: {
+    fontSize: 13,
+    color: colors.alert,
   },
-  btnPageTitle:{
-    flex:1,
-    flexDirection:"row",
-    alignItems:'center'
+  btnPageTitle: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-
 });

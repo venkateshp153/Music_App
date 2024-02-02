@@ -1,246 +1,95 @@
-// import React, {useState} from 'react';
-// import {StatusBar, Text, Image, View} from 'react-native';
-// import AppInput from '../components/AppInput';
-// import { useDispatch } from 'react-redux';
-// import { setToken} from '../redux/auth.js';
-// import {obj} from '../assets/Objects/obj';
-// import {colors} from '../styles/colors';
-// import {styles} from '../styles/styles';
-// import KeyboardAvoidingContainer from '../components/KeyboardAvoidingContainer';
-// import BackButton from '../components/BackButton';
-// import AppButton from '../components/AppButton';
-// import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-// import AntDesign from 'react-native-vector-icons/AntDesign';
-// import { login } from '../api/auth';
-
-// const SignIn = ({navigation}) => {
-//   const [email, setEmail] = useState({value: '', error: false});
-//   const [password, setPassword] = useState({value: '', error: false});
-//   const dispatch = useDispatch();
-
-//   function validateEmail() {
-//     if (!obj.regex.email.test(email.value)) {
-//       setEmail({...email, error: true});
-//       console.log('email not valid');
-//     } else {
-//       setEmail({...email, error: false});
-//       console.log('valid email');
-//     }
-//   }
-//   function validatePassword() {
-//     if (!obj.regex.password.test(password.value)) {
-//       setPassword({...password, error: true});
-//       console.log('password not valid');
-//     } else {
-//       setPassword({...password, error: false});
-//       console.log('valid password');
-//     }
-//   }
-
-  
-
-//   const handleLogin = async () => {
-//     try {
-//       const response = await login(email.value, password.value);
-//       const data = await response.json();
-
-//       if (response.ok) {
-//         dispatch(setToken(data.token)); // Dispatch token to store
-//         navigation.navigate('Home');
-//       } else {
-//         Alert.alert('Error', data.message);
-//       }
-//     } catch (error) {
-//       console.error('Login failed:', error);
-//       Alert.alert('Error', 'Failed to login. Please try again.');
-//     }
-//   }
-  
-
-//   return (
-//     <KeyboardAvoidingContainer>
-//       <StatusBar />
-//       <View style={styles.btnPageTitle}>
-//       <BackButton />
-//       <View>
-//       <Text style={styles.pageTitle}>Login</Text>
-//       <Text style={{color: 'gray'}}>Please sigin to continue</Text>
-//       </View>
-      
-//       </View>
-    
-//       <Image
-//         source={require('../assets/images/AWE-logos/AWE-logos_transparent.png')}
-//         style={{
-//           width: 350,
-//           height: 200,
-//           alignSelf: 'center',
-//           borderRadius: 150,
-//         }}
-//       />
-//       <AppInput
-//         label="Username/Email-ID"
-//         showLabel={true}
-//         inputIcon={require('../assets/images/mail.png')}
-//         activeBorder={email.error}
-//         showBorder={email.value != '' ? true : false}
-//         onChangeText={text => {
-//           setEmail({...email, value: text});
-//           // console.log(text);
-//         }}
-//         value={email.value}
-//         error={email.error}
-//         onBlur={() => validateEmail()}
-//       />
-//       <AppInput
-//         label="Password"
-//         showLabel={true}
-//         // activeBorder={password.error}
-//         showBorder={password.value}
-//         onChangeText={text => {
-//           setPassword({...password, value: text});
-//           // console.log(text);
-//         }}
-//         value={password.value}
-//         error={password.error}
-//         onBlur={() => validatePassword()}
-//       />
-//       <Text style={[{alignSelf: 'center'}, styles.linkStyle]} onPress={()=>{navigation.navigate('ForgotPassword')}}>
-//         Forgot Password?
-//       </Text>
-//       <AppButton
-//         text="LOGIN"
-//         onPress={handleLogin}
-//         buttonStyle={{
-//           marginTop: 20,
-//           alignSelf: 'center',
-//           backgroundColor: colors.appThemeColor,
-//           width: 250,
-//         }}
-//         textStyle={{color: colors.primaryColor, fontSize: 13}}
-//       />
-//       <View
-//         style={{
-//           flex: 1,
-//           justifyContent: 'space-around',
-//           alignItems: 'center',
-//           flexDirection: 'row',
-//           marginVertical: 50,
-//         }}>
-//         <MaterialCommunityIcons name="gmail" size={25} color="red" />
-//         <AntDesign name="facebook-square" size={25} color="blue" />
-//         <AntDesign name="github" size={25} color="#000" />
-//       </View>
-//       <Text style={[{alignSelf: 'center', color: '#000'}]}>
-//         Dont have an Account?{' '}
-//         <Text
-//           style={{color: colors.alert}}
-//           onPress={() => {
-//             navigation.navigate('SignUp');
-//           }}>
-//           SignUp
-//         </Text>{' '}
-//       </Text>
-//     </KeyboardAvoidingContainer>
-//   );
-// };
-
-// export default SignIn;
-
-
-
-
-// SignIn component
-import React, { useState } from 'react';
-import { StatusBar, Text, Image, View, Alert } from 'react-native';
-import { login } from '../api/auth';
+import React, {useState} from 'react';
+import {
+  StatusBar,
+  Text,
+  Image,
+  View,
+  Alert,
+  TouchableOpacity,
+} from 'react-native';
 import KeyboardAvoidingContainer from '../components/KeyboardAvoidingContainer';
 import BackButton from '../components/BackButton';
 import AppButton from '../components/AppButton';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import AppInput from '../components/AppInput';
-import { obj } from '../assets/Objects/obj';
-import { colors } from '../styles/colors';
-import { styles } from '../styles/styles';
+import {obj} from '../assets/Objects/obj';
+import {colors} from '../styles/colors';
+import {styles} from '../styles/styles';
+import {BASE_URL} from '../../env';
+import {useDispatch, useSelector} from 'react-redux';
+import {signin} from '../redux/features/AuthSlice';
+import Splash from './Splash';
 
-const SignIn = ({ navigation }) => {
+const SignIn = ({navigation}) => {
   const [email, setEmail] = useState({
-    value: "",
+    value: '',
     errorActive: false,
-    errorMessage: "",
+    errorMessage: '',
     verify: false,
   });
   const [password, setPassword] = useState({
-    value: "",
+    value: '',
     errorActive: false,
-    errorMessage: "",
+    errorMessage: '',
     verify: false,
+    show: false,
   });
   const [isFocused, setIsFocused] = useState(false);
-  // function validateEmail() {
-  //   if (!obj.regex.email.test(email.value)) {
-  //     setEmail({ ...email, error: true });
-  //     console.log('email not valid');
-  //   } else {
-  //     setEmail({ ...email, error: false });
-  //     console.log('valid email');
-  //   }
-  // }
+  const dispatch = useDispatch();
+  const {userData, isLoading} = useSelector(state => state.auth);
 
-  // function validatePassword() {
-  //   if (!obj.regex.password.test(password.value)) {
-  //     setPassword({ ...password, error: true });
-  //     console.log('password not valid');
-  //   } else {
-  //     setPassword({ ...password, error: false });
-  //     console.log('valid password');
-  //   }
-  // }
-  
   const handleFocus = () => {
     setIsFocused(true);
   };
-  const handleEmailInputChange = (text) => {
+  const handleEmailInputChange = text => {
     const inputValue = text;
     const val = obj.regex.email.test(text);
-    setEmail({ ...email, value: inputValue, verify: val,errorMessage:false?"Incorrect Email":"" });
+    setEmail({
+      ...email,
+      value: inputValue,
+      verify: val,
+      errorMessage: false ? 'Incorrect Email' : '',
+    });
   };
-  const handlePasswordInputChange = (text) => {
+  const handlePasswordInputChange = text => {
     const inputValue = text;
     const val = obj.regex.password.test(text);
-    setPassword({ ...password, value: inputValue, verify: val,errorMessage:false?"Incorrect Email":"" });
+    setPassword({
+      ...password,
+      value: inputValue,
+      verify: val,
+      errorMessage: false ? 'Incorrect Email' : '',
+    });
   };
   const handleEmailInputOnBlur = () => {
     setIsFocused(false);
     if (
-      email.value === "" ||
+      email.value === '' ||
       email.value === undefined ||
       email.value === null
     ) {
       setEmail({
         ...email,
         errorActive: true,
-        errorMessage: "Please enter registered email Id",
+        errorMessage: 'Enter your email-Id',
       });
       console.log(`${email.errorMessage} ===> error ==> ${email.errorActive}`);
     } else if (email.value.match(obj.regex.email)) {
       setEmail({
         ...email,
         errorActive: false,
-        errorMessage: "",
+        errorMessage: '',
       });
       console.log(
-        `It's a Match ${email.errorMessage} ===> error ==>${email.errorActive}`
+        `It's a Match ${email.errorMessage} ===> error ==>${email.errorActive}`,
       );
     } else {
       setEmail({
         ...email,
         errorActive: true,
-        errorMessage: "incorrect email Id",
+        errorMessage: 'incorrect email',
       });
       console.log(
-        `It's not a Matched  ${email.errorMessage} ===> error ==>${email.errorActive}`
+        `It's not a Matched  ${email.errorMessage} ===> error ==>${email.errorActive}`,
       );
     }
   };
@@ -248,137 +97,229 @@ const SignIn = ({ navigation }) => {
   const handlePasswordInputOnBlur = () => {
     setIsFocused(false);
     if (
-      password.value === "" ||
+      password.value === '' ||
       password.value === undefined ||
       password.value === null
     ) {
       setPassword({
         ...password,
         errorActive: true,
-        errorMessage: "please enter the password",
+        errorMessage: 'Enter your password',
       });
     } else if (password.value.match(obj.regex.password)) {
       setPassword({
         ...password,
         errorActive: false,
-        errorMessage: "",
+        errorMessage: '',
       });
       // console.log(`${newPassword.errorMessage} ==>>`)
     } else {
       setPassword({
         ...password,
         errorActive: true,
-        errorMessage: "Incorrect Password",
+        errorMessage: 'Incorrect Password',
       });
       // show pop-up that shows Password requirements
     }
   };
 
-  const handleLogin = async () => {
-    try {
-      const response = await login(email, password);
-      const data = await response.json();
+  // const handleSignin = async () => {
+  //   // Prepare request body
+  //   const requestBody = {
+  //     "email": email.value,
+  //     "password": password.value,
+  //   };
 
-      if (response.ok) {
-      
-        navigation.navigate('Home');
-      } else {
-       
-        Alert.alert('Error', data.message);
-      }
-    } catch (error) {
-      console.error('Login failed:', error);
-    
-      Alert.alert('Error', 'Failed to login. Please try again.');
+  //   // Perform basic validation
+  //   if (!requestBody.email || !requestBody.password) {
+  //     Alert.alert('Error', 'Please fill in all fields');
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await fetch(`${BASE_URL}/signin`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(requestBody), // Stringify the JSON object
+  //     });
+
+  //     // if (!response) {
+  //     //   throw new Error('Failed to sign in');
+  //     // }
+
+  //     const data = await response.json();
+  //     if (data.success) {
+  //       // Sign-in successful
+  //       Alert.alert('Success', 'Sign-in successful!');
+  //       // Save token to AsyncStorage or Context for further authentication
+  //       // For example, you can store it in AsyncStorage like this:
+  //       // await AsyncStorage.setItem('token', data.token);
+  //     } else {
+  //       // Sign-in failed
+  //       Alert.alert('Error', data.message || 'Sign-in failed');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error signing in:', error);
+  //     Alert.alert('Error', 'Failed to sign in. Please try again.');
+  //   }
+  // };
+
+  const handleSignin = () => {
+    const params = {
+      email: email.value,
+      password: password.value,
+    };
+    if (!email.value || !password.value) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
     }
+
+    console.log('params', params);
+    dispatch(signin(params));
   };
 
   return (
     <KeyboardAvoidingContainer>
       <StatusBar />
-      <View style={styles.btnPageTitle}>
-        <BackButton />
+      {!isLoading ? (
         <View>
-          <Text style={styles.pageTitle}>Login</Text>
-          <Text style={{ color: 'gray' }}>Please sign in to continue</Text>
-        </View>
-      </View>
+          <View style={styles.btnPageTitle}>
+            <BackButton />
+            <View>
+              <Text style={styles.pageTitle}>Login</Text>
+              <Text style={{color: 'gray'}}>Please sign in to continue</Text>
+            </View>
+          </View>
 
-      <Image
-        source={require('../assets/images/AWE-logos/AWE-logos_transparent.png')}
-        style={{
-          width: 350,
-          height: 200,
-          alignSelf: 'center',
-          borderRadius: 150,
-        }}
-      />
-      <AppInput
-        label="Username/Email-ID"
-        showLabel={false}
-        inputIcon={require('../assets/images/mail.png')}
-        activeBorder={ email.errorMessage !== "" ? true : false}
-        showBorder={true} 
-        value={email.value}
-        error={email.errorMessage}
-        onChangeText={handleEmailInputChange}
-        onBlur={handleEmailInputOnBlur}
-        onFocus={handleFocus}
-        
-      />
-      <AppInput
-        label="Password"
-        showLabel={false}
-        inputIcon={require('../assets/images/mail.png')}
-        activeBorder={password.errorMessage !== "" ? true : false}
-        showBorder={true}
-        value={password.value}
-        error={password.errorMessage}
-        onChangeText={handlePasswordInputChange}
-        onBlur={handlePasswordInputOnBlur}
-        onFocus={handleFocus}
-    
-      />
-      <Text
-        style={[{ alignSelf: 'center' }, styles.linkStyle]}
-        onPress={() => {
-          navigation.navigate('ForgotPassword');
-        }}>
-        Forgot Password?
-      </Text>
-      <AppButton
-        text="LOGIN"
-        onPress={handleLogin}
-        buttonStyle={{
-          marginTop: 20,
-          alignSelf: 'center',
-          backgroundColor: colors.appThemeColor,
-          width: 250,
-        }}
-        textStyle={{ color: colors.primaryColor, fontSize: 13 }}
-      />
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'space-around',
-          alignItems: 'center',
-          flexDirection: 'row',
-          marginVertical: 50,
-        }}>
-        <MaterialCommunityIcons name="gmail" size={25} color="red" />
-        <AntDesign name="facebook-square" size={25} color="blue" />
-        <AntDesign name="github" size={25} color="#000" />
-      </View>
-      <Text style={[{ alignSelf: 'center', color: '#000' }]}>
-        Don't have an Account?{' '}
-        <Text
-          style={{ color: colors.alert }}
-          onPress={() => {
-            navigation.navigate('SignUp');
-          }}>
-          SignUp
-        </Text>{' '}
-      </Text>
+          <Image
+            source={require('../assets/images/AWE-logos/AWE-logos_transparent.png')}
+            style={{
+              width: 350,
+              height: 200,
+              alignSelf: 'center',
+              borderRadius: 150,
+            }}
+          />
+          <AppInput
+            label="Username/Email-ID"
+            showLabel={false}
+            inputIcon={require('../assets/images/mail.png')}
+            activeBorder={email.errorMessage !== '' ? true : false}
+            showBorder={true}
+            value={email.value}
+            errorLabel={email.errorMessage}
+            onChangeText={handleEmailInputChange}
+            onBlur={handleEmailInputOnBlur}
+            onFocus={handleFocus}
+          />
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <AppInput
+              label="Password"
+              showLabel={false}
+              inputIcon={require('../assets/images/lock.png')}
+              activeBorder={password.errorMessage !== '' ? true : false}
+              showBorder={true}
+              value={password.value}
+              secureTextEntry={password.show == true ? false : true}
+              errorLabel={password.errorMessage}
+              onChangeText={handlePasswordInputChange}
+              onBlur={handlePasswordInputOnBlur}
+              onFocus={handleFocus}
+              style={{width: '100%', alignSelf: 'flex-start', paddingLeft: 10}}
+            />
+            <TouchableOpacity
+              onPress={() => {
+                setPassword({...password, show: !password.show});
+              }}>
+              {password.show ? (
+                <Image
+                  source={require('../assets/images/See.png')}
+                  style={{
+                    width: 20,
+                    height: 20,
+                    alignSelf: 'flex-start',
+                    position: 'absolute',
+                    right: 10,
+                    bottom: 0.5,
+                  }}
+                />
+              ) : (
+                <Image
+                  source={require('../assets/images/noSee.png')}
+                  style={{
+                    width: 20,
+                    height: 20,
+                    alignSelf: 'flex-start',
+                    position: 'absolute',
+                    right: 10,
+                    bottom: 0.5,
+                  }}
+                />
+              )}
+            </TouchableOpacity>
+          </View>
+
+          <Text
+            style={[{alignSelf: 'center'}, styles.linkStyle]}
+            onPress={() => {
+              navigation.navigate('ForgotPassword');
+            }}>
+            Forgot Password?
+          </Text>
+          <AppButton
+            text="LOGIN"
+            onPress={handleSignin}
+            buttonStyle={{
+              marginTop: 20,
+              alignSelf: 'center',
+              backgroundColor: colors.appThemeColor,
+              width: 250,
+            }}
+            textStyle={{color: colors.primaryColor, fontSize: 13}}
+          />
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'space-around',
+              alignItems: 'center',
+              flexDirection: 'row',
+              marginVertical: 50,
+            }}>
+            <Image
+              source={require('../assets/images/google.png')}
+              style={{width: 20, height: 20, alignSelf: 'baseline'}}
+            />
+            <Image
+              source={require('../assets/images/facebook.png')}
+              style={{width: 20, height: 20, alignSelf: 'baseline'}}
+            />
+            <Image
+              source={require('../assets/images/github.png')}
+              style={{width: 20, height: 20, alignSelf: 'baseline'}}
+            />
+          </View>
+          <Text style={[{alignSelf: 'center', color: '#000'}]}>
+            Don't have an Account?{' '}
+            <Text
+              style={{color: colors.alert}}
+              onPress={() => {
+                navigation.navigate('SignUp');
+              }}>
+              SignUp
+            </Text>{' '}
+          </Text>
+        </View>
+      ) : (
+        <Splash />
+      )}
     </KeyboardAvoidingContainer>
   );
 };

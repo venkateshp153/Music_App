@@ -1,14 +1,10 @@
-import {View, Text} from 'react-native';
-import React, {useEffect} from 'react';
+import {View, Text, ActivityIndicator} from 'react-native';
+import React from 'react';
 
-const Splash = ({navigation}) => {
-  useEffect(() => {
-    setTimeout(() => {
-      navigation.navigate('Parent');
-    }, 2000);
-  }, []);
+const Splash = () => {
   return (
-    <View>
+    <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator size="small" color="#7071E8" />
       <Text>Loading..</Text>
     </View>
   );

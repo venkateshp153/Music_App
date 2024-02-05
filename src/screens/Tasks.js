@@ -6,7 +6,7 @@ import { View, Text } from 'react-native'
 const Tasks = ({navigation}) => {
   return (
     <View>
-      <Text>Tasks</Text>
+      <Text>Daily task</Text>
     </View>
   )
 }

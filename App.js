@@ -5,8 +5,7 @@ import AuthStack from './src/navigation/AuthStack';
 import { useSelector } from 'react-redux';
 
 function App(){
-  // const [userToken, setUserToken] = useState('adeufxurf');
-  // const [userToken, setUserToken] = useState(null);
+
   const {userData} = useSelector(state => state.auth);
   console.log("---->> userData",userData)
   return (

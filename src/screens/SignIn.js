@@ -21,13 +21,13 @@ import Splash from './Splash';
 
 const SignIn = ({navigation}) => {
   const [email, setEmail] = useState({
-    value: '',
+    value: 'admin@gmail.com',
     errorActive: false,
     errorMessage: '',
     verify: false,
   });
   const [password, setPassword] = useState({
-    value: '',
+    value: 'Admin@123',
     errorActive: false,
     errorMessage: '',
     verify: false,
@@ -178,149 +178,159 @@ const SignIn = ({navigation}) => {
 
     console.log('params', params);
     dispatch(signin(params));
+    console.log("+++++++",JSON.stringify(userData))
+    // setEmail({...email,errorMessage:userData.message})
+    // setPassword({...password,errorMessage:userData.message})
   };
 
   return (
-    <KeyboardAvoidingContainer>
-      <StatusBar />
+    <>
       {!isLoading ? (
-        <View>
-          <View style={styles.btnPageTitle}>
-            <BackButton />
-            <View>
-              <Text style={styles.pageTitle}>Login</Text>
-              <Text style={{color: 'gray'}}>Please sign in to continue</Text>
+        <KeyboardAvoidingContainer>
+          <StatusBar />
+
+          <View>
+            <View style={styles.btnPageTitle}>
+              <BackButton />
+              <View>
+                <Text style={styles.pageTitle}>Login</Text>
+                <Text style={{color: 'gray'}}>Please sign in to continue</Text>
+              </View>
             </View>
-          </View>
 
-          <Image
-            source={require('../assets/images/AWE-logos/AWE-logos_transparent.png')}
-            style={{
-              width: 350,
-              height: 200,
-              alignSelf: 'center',
-              borderRadius: 150,
-            }}
-          />
-          <AppInput
-            label="Username/Email-ID"
-            showLabel={false}
-            inputIcon={require('../assets/images/mail.png')}
-            activeBorder={email.errorMessage !== '' ? true : false}
-            showBorder={true}
-            value={email.value}
-            errorLabel={email.errorMessage}
-            onChangeText={handleEmailInputChange}
-            onBlur={handleEmailInputOnBlur}
-            onFocus={handleFocus}
-          />
-          <View
-            style={{
-              flex: 1,
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
+            <Image
+              source={require('../assets/images/AWE-logos/AWE-logos_transparent.png')}
+              style={{
+                width: 350,
+                height: 200,
+                alignSelf: 'center',
+                borderRadius: 150,
+              }}
+            />
             <AppInput
-              label="Password"
+              label="Username/Email-ID"
               showLabel={false}
-              inputIcon={require('../assets/images/lock.png')}
-              activeBorder={password.errorMessage !== '' ? true : false}
+              inputIcon={require('../assets/images/mail.png')}
+              activeBorder={email.errorMessage !== '' ? true : false}
               showBorder={true}
-              value={password.value}
-              secureTextEntry={password.show == true ? false : true}
-              errorLabel={password.errorMessage}
-              onChangeText={handlePasswordInputChange}
-              onBlur={handlePasswordInputOnBlur}
+              value={email.value}
+              errorLabel={email.errorMessage}
+              onChangeText={handleEmailInputChange}
+              onBlur={handleEmailInputOnBlur}
               onFocus={handleFocus}
-              style={{width: '100%', alignSelf: 'flex-start', paddingLeft: 10}}
             />
-            <TouchableOpacity
-              onPress={() => {
-                setPassword({...password, show: !password.show});
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}>
-              {password.show ? (
-                <Image
-                  source={require('../assets/images/See.png')}
-                  style={{
-                    width: 20,
-                    height: 20,
-                    alignSelf: 'flex-start',
-                    position: 'absolute',
-                    right: 10,
-                    bottom: 0.5,
-                  }}
-                />
-              ) : (
-                <Image
-                  source={require('../assets/images/noSee.png')}
-                  style={{
-                    width: 20,
-                    height: 20,
-                    alignSelf: 'flex-start',
-                    position: 'absolute',
-                    right: 10,
-                    bottom: 0.5,
-                  }}
-                />
-              )}
-            </TouchableOpacity>
-          </View>
+              <AppInput
+                label="Password"
+                showLabel={false}
+                inputIcon={require('../assets/images/lock.png')}
+                activeBorder={password.errorMessage !== '' ? true : false}
+                showBorder={true}
+                value={password.value}
+                secureTextEntry={password.show == true ? false : true}
+                errorLabel={password.errorMessage}
+                onChangeText={handlePasswordInputChange}
+                onBlur={handlePasswordInputOnBlur}
+                onFocus={handleFocus}
+                style={{
+                  width: '100%',
+                  alignSelf: 'flex-start',
+                  paddingLeft: 10,
+                }}
+              />
+              <TouchableOpacity
+                onPress={() => {
+                  setPassword({...password, show: !password.show});
+                }}>
+                {password.show ? (
+                  <Image
+                    source={require('../assets/images/See.png')}
+                    style={{
+                      width: 20,
+                      height: 20,
+                      alignSelf: 'flex-start',
+                      position: 'absolute',
+                      right: 10,
+                      bottom: 0.5,
+                    }}
+                  />
+                ) : (
+                  <Image
+                    source={require('../assets/images/noSee.png')}
+                    style={{
+                      width: 20,
+                      height: 20,
+                      alignSelf: 'flex-start',
+                      position: 'absolute',
+                      right: 10,
+                      bottom: 0.5,
+                    }}
+                  />
+                )}
+              </TouchableOpacity>
+            </View>
 
-          <Text
-            style={[{alignSelf: 'center'}, styles.linkStyle]}
-            onPress={() => {
-              navigation.navigate('ForgotPassword');
-            }}>
-            Forgot Password?
-          </Text>
-          <AppButton
-            text="LOGIN"
-            onPress={handleSignin}
-            buttonStyle={{
-              marginTop: 20,
-              alignSelf: 'center',
-              backgroundColor: colors.appThemeColor,
-              width: 250,
-            }}
-            textStyle={{color: colors.primaryColor, fontSize: 13}}
-          />
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'space-around',
-              alignItems: 'center',
-              flexDirection: 'row',
-              marginVertical: 50,
-            }}>
-            <Image
-              source={require('../assets/images/google.png')}
-              style={{width: 20, height: 20, alignSelf: 'baseline'}}
-            />
-            <Image
-              source={require('../assets/images/facebook.png')}
-              style={{width: 20, height: 20, alignSelf: 'baseline'}}
-            />
-            <Image
-              source={require('../assets/images/github.png')}
-              style={{width: 20, height: 20, alignSelf: 'baseline'}}
-            />
-          </View>
-          <Text style={[{alignSelf: 'center', color: '#000'}]}>
-            Don't have an Account?{' '}
             <Text
-              style={{color: colors.alert}}
+              style={[{alignSelf: 'center'}, styles.linkStyle]}
               onPress={() => {
-                navigation.navigate('SignUp');
+                navigation.navigate('ForgotPassword');
               }}>
-              SignUp
-            </Text>{' '}
-          </Text>
-        </View>
+              Forgot Password?
+            </Text>
+            <AppButton
+              text="LOGIN"
+              onPress={handleSignin}
+              buttonStyle={{
+                marginTop: 20,
+                alignSelf: 'center',
+                backgroundColor: colors.appThemeColor,
+                width: 250,
+              }}
+              textStyle={{color: colors.primaryColor, fontSize: 13}}
+            />
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'space-around',
+                alignItems: 'center',
+                flexDirection: 'row',
+                marginVertical: 50,
+              }}>
+              <Image
+                source={require('../assets/images/google.png')}
+                style={{width: 20, height: 20, alignSelf: 'baseline'}}
+              />
+              <Image
+                source={require('../assets/images/facebook.png')}
+                style={{width: 20, height: 20, alignSelf: 'baseline'}}
+              />
+              <Image
+                source={require('../assets/images/github.png')}
+                style={{width: 20, height: 20, alignSelf: 'baseline'}}
+              />
+            </View>
+            <Text style={[{alignSelf: 'center', color: '#000'}]}>
+              Don't have an Account?{' '}
+              <Text
+                style={{color: colors.alert}}
+                onPress={() => {
+                  navigation.navigate('SignUp');
+                }}>
+                SignUp
+              </Text>{' '}
+            </Text>
+          </View>
+        </KeyboardAvoidingContainer>
       ) : (
         <Splash />
       )}
-    </KeyboardAvoidingContainer>
+    </>
   );
 };
 

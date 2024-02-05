@@ -4,7 +4,7 @@ import Tasks from '../screens/Tasks'
 const Stack = createStackNavigator()
 const TaskStackScreen = () => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{headerShown:false}}>
       <Stack.Screen name="Tasks" component={Tasks} />
     </Stack.Navigator>
   )

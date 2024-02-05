@@ -2,6 +2,7 @@ export const colors = {
         appThemeColor:"#5a4ae3",
         titleColor:'#FFFF',
         textColor:'#3C4048',
+        inActive:"#B4B4B8",
         headerColor:"#5a4ae3",
         buttonColor:"#DDDDDD",
         primaryColor:'#FFFF',

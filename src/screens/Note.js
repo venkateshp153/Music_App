@@ -67,7 +67,7 @@ import React from 'react'
 const Note = () => {
   return (
     <View>
-      <Text>Note</Text>
+      <Text>Notice Board</Text>
     </View>
   )
 }

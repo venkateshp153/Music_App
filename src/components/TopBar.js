@@ -21,18 +21,18 @@ const TopBar = ({onPress, imageSource}) => {
       <View style={{flexDirection: 'row'}}>
         <TouchableOpacity
           style={{
-            width: 50,
-            height: 50,
+            width: 45,
+            height: 45,
             justifyContent: 'center',
             alignItems: 'center',
             // borderWidth:1,
             // borderColor:"black",
-            borderRadius:45,
+            // borderRadius:45,
             backgroundColor:colors.buttonColor
           }}
           onPress={onPress}>
           <MaterialCommunityIcons
-            size={30}
+            size={25}
             name="menu"
             style={{color: colors.appThemeColor}}
           />
@@ -48,16 +48,16 @@ const TopBar = ({onPress, imageSource}) => {
       </View>
       <TouchableOpacity
         style={{
-          width: 50,
-          height: 50,
+          width: 45,
+          height: 45,
           justifyContent: 'center',
           alignItems: 'center',
-          borderRadius:45,
+          // borderRadius:45,
           backgroundColor:colors.buttonColor
         }}>
         <Ionicons
-          size={30}
-          name="person-circle-outline"
+          size={20}
+          name="ellipsis-vertical-sharp"
           style={{color: colors.appThemeColor}}
         />
       </TouchableOpacity>

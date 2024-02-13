@@ -17,8 +17,10 @@ const Home = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 0.88,backgroundColor:colors.primaryColor }}>
+    <View style={{flex:1}}>
+    <SafeAreaView style={{ flex: 0.9,backgroundColor:colors.primaryColor }}>
       <TopBar onPress={() => navigation.openDrawer()} imageSource={require('../assets/images/schoolImg.jpg')} />
+      <Text style={{fontSize:size.fontSize.medium,alignSelf:"center"}}>Home</Text>
       <ScrollView>
         <View style={styles.pageStyle}>
           <View style={styles.sectionBox}>
@@ -46,8 +48,11 @@ const Home = ({ navigation }) => {
             <Text style={{ fontSize: size.fontSize.xmedium, fontWeight: 'bold' }}>Off this week</Text>
           </View>
         </View>
+       
       </ScrollView>
     </SafeAreaView>
+    <View style={{flex:0.15, backgroundColor:"#FFFF"}}></View>
+    </View>
   );
 };
 

@@ -151,9 +151,11 @@ export const styles = StyleSheet.create({
   },
   homeIcon: {
     height: 60,
-    width: 60,
+    width: 70,
     borderRadius: 40,
     borderWidth: 1,
+    marginBottom:30,
+    marginHorizontal:10,
     borderColor: colors.inActive,
     backgroundColor:colors.primaryColor,
     alignItems: 'center',
@@ -162,7 +164,7 @@ export const styles = StyleSheet.create({
     
   },
   homeIconLabel: {
-    width: 40,
+    width: "auto",
     fontSize: size.fontSize.xsmall,
     textAlign: 'center',
   },

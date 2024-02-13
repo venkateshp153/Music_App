@@ -28,9 +28,77 @@ export const obj = {
       'By SignIn/Login you agree to our Terms and Conditions and have read our Privacy policy',
   },
 };
-// { 
-//   "username":"Admin123",
-//   "email": "admin6@gmail.com",
-//   "password": "Admin6@123",
-//   "phone":"9988776655"
-// }
+export const announcement_data =
+[
+  {
+    "userId": 1,
+    "id": 1,
+    "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+    "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
+  },
+  {
+    "userId": 1,
+    "id": 2,
+    "title": "qui est esse",
+    "body": "est rerum tempore vitae\nsequi sint nihil reprehenderit dolor beatae ea dolores neque\nfugiat blanditiis voluptate porro vel nihil molestiae ut reiciendis\nqui aperiam non debitis possimus qui neque nisi nulla"
+  },
+]
+
+export const announcements = [
+  {
+    id: 1,
+    title: 'Announcement 1',
+    body: 'This is the body of announcement 1',
+  },
+  {
+    id: 2,
+    title: 'Announcement 2',
+    body: 'This is the body of announcement 2',
+  },
+
+];
+
+export const wishes = [
+  {
+    id: 1,
+    name: 'John Doe',
+    date: '2024-02-05',
+    imageSource: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+  },
+  {
+    id: 2,
+    name: 'Jane Doe',
+    date: '2024-02-06',
+    imageSource: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+  },
+  {
+    id: 3,
+    name: 'John Doe',
+    date: '2024-02-05',
+    imageSource: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+  },
+  {
+    id: 4,
+    name: 'Jane Doe',
+    date: '2024-02-06',
+    imageSource: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+  },
+  {
+    id: 5,
+    name: 'John Doe',
+    date: '2024-02-05',
+    imageSource: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+  },
+  {
+    id: 6,
+    name: 'Jane Doe',
+    date: '2024-02-06',
+    imageSource: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+  },
+];
+
+export const holidays = [
+  {id: 1, day: '01.01.2025', month: 'January', occation: 'New Year'},
+  {id: 2, day: '25.12.2025', month: 'December', occation: 'Christmas'},
+ 
+];

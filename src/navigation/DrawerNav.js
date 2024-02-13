@@ -6,6 +6,7 @@ import {
 } from '@react-navigation/drawer';
 import {useNavigation} from '@react-navigation/native'; // Import useNavigation hook
 import Icon from 'react-native-vector-icons/FontAwesome';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import TaskStackScreen from './TaskStackScreen';
 import TabNav from './TabNav';
 import SecureApp from '../screens/SecureApp';
@@ -41,7 +42,8 @@ const DrawerContent = ({navigation}) => {
 
   return (
     <DrawerContentScrollView>
-      <View style={{padding: 20}}>
+      <View style={{padding: 30}}>
+        <View style={{justifyContent:"space-between",flexDirection:"row"}}>
         <TouchableOpacity onPress={handleProfilePress}>
           <View
             style={{
@@ -61,6 +63,10 @@ const DrawerContent = ({navigation}) => {
             </View>
           </View>
         </TouchableOpacity>
+        <TouchableOpacity onPress={()=>navigation.closeDrawer()}>
+          <MaterialIcons name="close" size={30}/>
+        </TouchableOpacity>
+        </View>
         {menuItems.map((item, index) => (
           <TouchableOpacity
             key={index}
@@ -78,8 +84,8 @@ const DrawerContent = ({navigation}) => {
                 style={{marginRight: 10}}
               />
               <View>
-                <Text style={{fontSize: 18}}>{item.name}</Text>
-                <Text style={{fontSize: 14, color: 'gray'}}>
+                <Text style={{fontSize: size.fontSize.xmedium,fontWeight:"bold"}}>{item.name}</Text>
+                <Text style={{fontSize: size.fontSize.small, color: 'gray'}}>
                   {item.subname}
                 </Text>
               </View>
@@ -96,7 +102,7 @@ const DrawerNav = () => {
     <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
     
       <Drawer.Screen
-        name="Home"
+        name="MainScreen"
         component={TabNav}
         options={{headerShown: false}}
       />

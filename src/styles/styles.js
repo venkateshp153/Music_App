@@ -12,8 +12,6 @@ export const styles = StyleSheet.create({
   },
   pageStyle: {
     width: '90%',
-    // borderWidth: 1,
-    // borderColor: 'black',
     alignSelf: 'center',
   },
   appName: {
@@ -126,33 +124,47 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    alignSelf: 'center',
+    alignSelf: 'flex-end',
     marginVertical: 10,
   },
   rankCard: {
     flexDirection: 'row',
-    // borderColor: 'red',
-    // borderWidth: 1,
     height: 90,
     width: '80%',
     justifyContent: 'center',
     alignSelf: 'center',
   },
+  homeIconContainer:{
+    height: 'auto',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    flexWrap: 'wrap',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 2,
+    backgroundColor:colors.appThemeColor,
+    borderRadius: 8,
+    padding: 20,
+    
+  },
   homeIcon: {
     height: 60,
-    width: 50,
+    width: 60,
+    borderRadius: 40,
     borderWidth: 1,
-    borderColor: 'green',
+    borderColor: colors.inActive,
+    backgroundColor:colors.primaryColor,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'column',
+    
   },
   homeIconLabel: {
     width: 40,
     fontSize: size.fontSize.xsmall,
     textAlign: 'center',
-    borderWidth: 1,
-    borderColor: 'blue',
   },
   homeDate: {
     height: 70,
@@ -160,14 +172,71 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: 'green',
-    marginVertical: 10,
+    borderColor: colors.buttonColor,
+    backgroundColor: '#eeee',
+    marginVertical: 15,
+    
   },
   announcements: {
-    height: 100,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: 'green',
+    height: 'auto',
+  
+    borderColor: colors.buttonColor,
     marginVertical: 10,
   },
+  announcementItemContainer: {
+    height:50,
+    padding: 10,
+    marginVertical:5,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderColor: colors.inActive,
+    borderRadius: 8,
+  },
+  announcementItemTitle: {
+    fontSize: size.fontSize.small,
+    fontWeight: 'bold',
+  },
+  announcementItemBody: {
+    fontSize: size.fontSize.xsmall,
+  },
+  flatListIcon: {
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  wishItemContainer: {
+    height: 60,
+    width: 80,
+    marginVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+  },
+  wishItemLabel:{
+    fontSize: size.fontSize.xsmall,
+    textAlign: 'center',
+  },
+  holidayItemContainer: {
+    height: 100,
+    width: "100%",
+    borderWidth: 1,
+    borderRadius:8,
+    marginVertical:10,
+    justifyContent:"space-between",
+    flexDirection: 'column',
+  },
+  holidayMonthLabel:{
+    textAlign:"left",
+    padding:5
+  },
+  holidayDayLabel:{
+    textAlign:"right",
+    padding:5
+  },
+  holidayWishsLabel:{
+    textAlign:"center",
+    fontSize:18,
+    fontWeight:"bold"
+  }
+ 
 });

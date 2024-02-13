@@ -13,7 +13,6 @@ export const signin = createAsyncThunk("signin",async (params,thunkApi)=>{
   console.log("file AuthSlice.js - signin params:",params)
   try{
     const response = await API.post('/signin',params);
-    console.log("===>>>",response)
     return response.data
   }catch(error){
     console.log("file AuthSlice",error)

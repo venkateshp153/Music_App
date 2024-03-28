@@ -239,6 +239,26 @@ export const styles = StyleSheet.create({
     textAlign:"center",
     fontSize:18,
     fontWeight:"bold"
-  }
- 
+  },
+  cancelBtn:{
+    marginTop:10,
+    borderWidth:1,
+    backgroundColor:colors.appThemeColor,
+    height:40,
+    padding:10,
+    width:80,
+    alignSelf:"flex-end",
+    alignItems:"center",
+    borderRadius:10,
+    color:"white"
+  },
+  timeTableContainer:{
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  progressBar:{
+    width:250,
+  },
+
 });

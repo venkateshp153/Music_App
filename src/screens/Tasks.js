@@ -7,10 +7,7 @@ import HomeIcon from '../components/HomeIcon';
 import { size } from '../styles/sizes';
 
 const Tasks = ({navigation}) => {
-  // const handlePress = item => {
-  //   navigation.navigate(item);
-  //   console.log('Item clicked:', item);
-  // };
+ 
   return (
     <View style={{backgroundColor: '#ffff'}}>
       <TopBar

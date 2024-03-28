@@ -7,7 +7,7 @@ import HomeIcon from '../components/HomeIcon';
 import { size } from '../styles/sizes';
 import Timings from '../components/Timings';
 import InfoBox from '../components/InfoBox';
-import { announcements, wishes, holidays } from '../assets/Objects/obj';
+import { announcements, wishes, holidays } from '../assets/utility/obj';
 import { colors } from '../styles/colors';
 
 const Home = ({ navigation }) => {

@@ -11,7 +11,7 @@ import KeyboardAvoidingContainer from '../components/KeyboardAvoidingContainer';
 import BackButton from '../components/BackButton';
 import AppButton from '../components/AppButton';
 import AppInput from '../components/AppInput';
-import {obj} from '../assets/Objects/obj';
+import {obj} from '../assets/utility/obj';
 import {colors} from '../styles/colors';
 import {styles} from '../styles/styles';
 import {BASE_URL} from '../../env';

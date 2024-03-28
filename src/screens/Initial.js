@@ -1,7 +1,7 @@
 import {Text, View, Image, TouchableOpacity, ScrollView} from 'react-native';
 import React from 'react';
 import {styles} from '../styles/styles';
-import {obj} from '../assets/Objects/obj';
+import {obj} from '../assets/utility/obj';
 import AppText from '../components/AppText';
 import {colors} from '../styles/colors';
 import AppButton from '../components/AppButton';

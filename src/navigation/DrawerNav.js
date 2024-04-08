@@ -56,10 +56,10 @@ const DrawerContent = ({navigation}) => {
               style={{width: 50, height: 50, borderRadius: 25, marginRight: 10}}
             />
             <View>
-              <Text style={{fontSize:size.fontSize.xmedium}}>{userData.user.username}</Text>
+              {/* <Text style={{fontSize:size.fontSize.xmedium}}>{userData}</Text>
               <Text style={{fontSize: size.fontSize.small, color: 'gray'}}>
-                {userData.user.email}
-              </Text>
+                {userData}
+              </Text> */}
             </View>
           </View>
         </TouchableOpacity>

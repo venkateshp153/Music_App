@@ -1,6 +1,7 @@
 import {StyleSheet} from 'react-native';
 import {colors} from './colors';
 import {size} from './sizes';
+import {timetableURL} from '../api';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -134,37 +135,35 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'center',
   },
-  homeIconContainer:{
+  homeIconContainer: {
     height: 'auto',
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     flexWrap: 'wrap',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 2,
-    backgroundColor:colors.appThemeColor,
+    backgroundColor: colors.appThemeColor,
     borderRadius: 8,
     padding: 20,
-    
   },
   homeIcon: {
     height: 60,
     width: 70,
     borderRadius: 40,
     borderWidth: 1,
-    marginBottom:30,
-    marginHorizontal:10,
+    marginBottom: 30,
+    marginHorizontal: 10,
     borderColor: colors.inActive,
-    backgroundColor:colors.primaryColor,
+    backgroundColor: colors.primaryColor,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'column',
-    
   },
   homeIconLabel: {
-    width: "auto",
+    width: 'auto',
     fontSize: size.fontSize.xsmall,
     textAlign: 'center',
   },
@@ -177,18 +176,17 @@ export const styles = StyleSheet.create({
     borderColor: colors.buttonColor,
     backgroundColor: '#eeee',
     marginVertical: 15,
-    
   },
   announcements: {
     height: 'auto',
-  
+
     borderColor: colors.buttonColor,
     marginVertical: 10,
   },
   announcementItemContainer: {
-    height:50,
+    height: 50,
     padding: 10,
-    marginVertical:5,
+    marginVertical: 5,
     justifyContent: 'space-between',
     flexDirection: 'row',
     borderWidth: 1,
@@ -214,51 +212,127 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'column',
   },
-  wishItemLabel:{
+  wishItemLabel: {
     fontSize: size.fontSize.xsmall,
     textAlign: 'center',
   },
   holidayItemContainer: {
     height: 100,
-    width: "100%",
+    width: '100%',
     borderWidth: 1,
-    borderRadius:8,
-    marginVertical:10,
-    justifyContent:"space-between",
+    borderRadius: 8,
+    marginVertical: 10,
+    justifyContent: 'space-between',
     flexDirection: 'column',
   },
-  holidayMonthLabel:{
-    textAlign:"left",
-    padding:5
+  holidayMonthLabel: {
+    textAlign: 'left',
+    padding: 5,
   },
-  holidayDayLabel:{
-    textAlign:"right",
-    padding:5
+  holidayDayLabel: {
+    textAlign: 'right',
+    padding: 5,
   },
-  holidayWishsLabel:{
-    textAlign:"center",
-    fontSize:18,
-    fontWeight:"bold"
+  holidayWishsLabel: {
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
-  cancelBtn:{
-    marginTop:10,
-    borderWidth:1,
-    backgroundColor:colors.appThemeColor,
-    height:40,
-    padding:10,
-    width:80,
-    alignSelf:"flex-end",
-    alignItems:"center",
-    borderRadius:10,
-    color:"white"
+  cancelBtn: {
+    marginTop: 10,
+    borderWidth: 1,
+    backgroundColor: colors.appThemeColor,
+    height: 40,
+    padding: 10,
+    width: 80,
+    alignSelf: 'flex-end',
+    alignItems: 'center',
+    borderRadius: 10,
+    color: 'white',
   },
-  timeTableContainer:{
+  timeTableContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  progressBar:{
-    width:250,
+  progressBar: {
+    width: 250,
   },
-
+  segmentButtonView: {
+    backgroundColor: colors.background,
+    width: '100%',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  segmentButton: {
+    borderBottomWidth: null,
+    width: '50%',
+    justifyContent: 'center',
+  },
+  segmentButtonText: {
+    fontSize: size.fontSize.small,
+    color: colors.textColor,
+    paddingVertical: 10,
+    alignSelf: 'center',
+  },
+  segmentDataView: {
+    width: '100%',
+    flex: 0.65,
+    borderBottomStartRadius: 10,
+    borderBottomEndRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.headerColor,
+  },
+  timeTableView: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  timeTableImg: {
+    borderWidth: 10,
+    width: 100,
+    height: 100,
+  },
+  timeTableInput: {
+    width: '100%',
+    alignSelf: 'flex-start',
+    paddingLeft: 10,
+  },
+  timetableUploadBtn: {
+    height: 40,
+    width: '80%',
+    backgroundColor: colors.darkColor,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 22,
+    alignSelf: 'center',
+  },
+  timeTableListView: {
+    flexGrow: 1,
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+    justifyContent:"center",
+  },
+  timeTableListImg: {
+    width: 80,
+    height: 80,
+    resizeMode: 'cover',    
+  },
+  timetableImageView: {
+    borderWidth: 1,
+    margin:5,
+    marginVertical:8,
+    width: 100,
+    height:100,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  timetableInfo: {
+    position: 'absolute',
+    zIndex: 1,
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: colors.darkColor,
+  },
 });

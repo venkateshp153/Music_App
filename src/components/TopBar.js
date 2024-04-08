@@ -11,7 +11,8 @@ const TopBar = ({onPress, imageSource}) => {
         width:"90%",
         alignSelf:"center",
         backgroundColor:colors.primaryColor,
-        marginTop:10,
+        marginTop:5,
+        marginBottom:5,
         position: 'relative',
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -25,9 +26,6 @@ const TopBar = ({onPress, imageSource}) => {
             height: 45,
             justifyContent: 'center',
             alignItems: 'center',
-            // borderWidth:1,
-            // borderColor:"black",
-            // borderRadius:45,
             backgroundColor:colors.buttonColor
           }}
           onPress={onPress}>
@@ -52,7 +50,6 @@ const TopBar = ({onPress, imageSource}) => {
           height: 45,
           justifyContent: 'center',
           alignItems: 'center',
-          // borderRadius:45,
           backgroundColor:colors.buttonColor
         }}>
         <Ionicons

@@ -298,6 +298,7 @@ export const styles = StyleSheet.create({
     width: '100%',
     alignSelf: 'flex-start',
     paddingLeft: 10,
+    color:"black"
   },
   timetableUploadBtn: {
     height: 40,
@@ -315,14 +316,14 @@ export const styles = StyleSheet.create({
     justifyContent:"center",
   },
   timeTableListImg: {
-    width: 80,
-    height: 80,
+    width: 90,
+    height: 90,
     resizeMode: 'cover',    
   },
   timetableImageView: {
     borderWidth: 1,
     margin:5,
-    marginVertical:8,
+    marginVertical:5,
     width: 100,
     height:100,
     alignItems: 'center',
@@ -335,4 +336,12 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: colors.darkColor,
   },
+  cancel_Check_Btns:{
+    position: 'absolute',
+    top: 5,
+    left: 5,
+    zIndex: 1,
+    alignSelf: 'flex-end',
+    backgroundColor: colors.baseGray05,
+  }
 });

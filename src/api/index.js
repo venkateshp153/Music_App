@@ -1,9 +1,10 @@
 import axios from "axios";
+import { BASE_URL } from "../../env";
 export const API = axios.create({
-    baseURL:"http://192.168.1.3:8080/api",
+    baseURL:BASE_URL,
 });""
-export const baseURL =  "http://192.168.1.3:8080/api"
-export const timetableURL = `${baseURL}/timetables`
+// export const baseURL =  "http://192.168.1.3:8080/api"
+export const timetableURL = `${BASE_URL}/timetables`
 
 export async function postData(url, data) {
     try {
@@ -42,4 +43,29 @@ export async function postData(url, data) {
     }
   }
   
+
+  export async function deleteTimetablesById(ids) {
+    try {
+      const deletePromises = ids.map(async (id) => {
+        const response = await fetch(`http://192.168.1.3:8080/api/timetables/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        const data = await response.json();
+        console.log(data); // Log the parsed JSON data
+        return data; // Return the parsed JSON data
+      });
+  
+      const results = await Promise.all(deletePromises);
+      console.log(results); // Array of responses from the server for each deletion
+      return results; // Return the array of responses
+    } catch (error) {
+      console.error('Error deleting timetables:', error);
+      throw error; // Throw the error to handle it in the caller function
+    }
+}
+
+
   

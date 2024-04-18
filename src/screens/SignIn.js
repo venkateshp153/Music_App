@@ -14,7 +14,7 @@ import AppInput from '../components/AppInput';
 import {obj} from '../assets/utility/obj';
 import {colors} from '../styles/colors';
 import {styles} from '../styles/styles';
-import {BASE_URL} from '../../env';
+
 import {useDispatch, useSelector} from 'react-redux';
 import {signin} from '../redux/features/AuthSlice';
 import Splash from './Splash';

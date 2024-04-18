@@ -20,9 +20,10 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {storage, db} from '../assets/utility/firebaseConfig';
 import AppInput from '../components/AppInput';
 import {obj} from '../assets/utility/obj';
-import {getData, postData, timetableURL} from '../api';
-import {useDispatch} from 'react-redux';
+import {deleteTimetable, postData, timetableURL, getData, deleteTimetablesById} from '../api';
+import {useDispatch, useSelector} from 'react-redux';
 import {size} from '../styles/sizes';
+import {getTimetables} from '../redux/features/AuthSlice';
 
 const TimeTable = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -32,6 +33,7 @@ const TimeTable = ({navigation}) => {
   const [isFocused, setIsFocused] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const dispatch = useDispatch();
+  const {timetableData} = useSelector(state => state.timetables);
   const [school, setSchool] = useState({
     value: '',
     errorActive: false,
@@ -55,18 +57,71 @@ const TimeTable = ({navigation}) => {
 
   const [selectedOption, setSelectedOption] = useState('Option 1');
   const [segBtnColor, setSegBtnColor] = useState('Option 1');
+  const [selectItem, setSelectItem] = useState({
+    select: false,
+    selectedItemId: [],
+  });
 
-  const fetchTimetables = () =>
-    getData(timetableURL)
-      .then(responseData => {
-        setTimetables(responseData.data);
-        console.log('Response data:', responseData);
-      })
-      .catch(error => {
-        console.error('Error:', error);
+  const handleOnLongPress = id => {
+    if (!selectItem.select) {
+      setSelectItem({
+        select: true,
+        selectedItemId: [id],
       });
+    }
+  };
 
+  const handlePress = id => {
+    if (selectItem.select) {
+      const newSelectedItemId = selectItem.selectedItemId.includes(id)
+        ? selectItem.selectedItemId.filter(itemId => itemId !== id)
+        : [...selectItem.selectedItemId, id];
+
+      setSelectItem({
+        ...selectItem,
+        selectedItemId: newSelectedItemId,
+      });
+    }
+  };
+
+  const handleDelete = async () => {
+    Alert.alert(
+      'Confirm Delete',
+      'Are you sure you want to delete selected items?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          onPress: async () => {
+            try {
+              const deletedItems = await Promise.all(
+                selectItem.selectedItemId.map(async id => {
+                  console.log(id);
+                  return deleteTimetablesById([id]); // Ensure id is passed as an array
+                }),
+              );
+              console.log('Deleted items:', deletedItems);
+              setSelectItem({
+                select: false,
+                selectedItemId: [],
+              });
+              effect_togetTimetable()
+            } catch (err) {
+              console.log('error', err);
+            }
+          },
+        },
+      ],
+      { cancelable: false },
+    );
+  };
+  
   const handleOptionClick = option => {
+    effect_togetTimetable()
     setSelectedOption(option);
     setSegBtnColor(option);
   };
@@ -206,46 +261,231 @@ const TimeTable = ({navigation}) => {
   const handleFocus = () => {
     setIsFocused(true);
   };
-  const clickOpenTimeTableImage = () => {};
-  const handleOnLongPress = itemId => {
-    if (selectedItems.includes(itemId)) {
-      setSelectedItems(selectedItems.filter(item => item !== itemId));
-    } else {
-      setSelectedItems([...selectedItems, itemId]);
+
+  const pickImage = () => {
+    let options = {
+      mediaType: 'photo',
+      maxWidth: 800,
+      maxHeight: 800,
+      quality: 1,
+      allowsEditing: true,
+      aspect: [3, 4],
+    };
+
+    launchImageLibrary(options, async response => {
+      try {
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.error) {
+          console.log('ImagePicker Error: ', response.error);
+        } else if (!response.didCancel) {
+          const selectedImage = response.assets[0];
+          setImage({uri: selectedImage.uri});
+          saveImage(selectedImage.uri);
+          // uploadImage(selectedImage.uri, "image")
+        } else {
+          console.log('No image selected');
+        }
+      } catch (error) {
+        console.log('Error selecting image:', error);
+      }
+    });
+  };
+
+  const saveImage = async uri => {
+    try {
+      if (!uri) {
+        console.log('Error: URI is undefined');
+        return;
+      }
+      const fileName = uri.split('/').pop();
+      const destPath = `${RNFS.DocumentDirectoryPath}/${fileName}`;
+      await RNFS.copyFile(uri, destPath);
+      console.log('Image saved successfully:', destPath);
+    } catch (error) {
+      console.log('Error saving image:', error);
     }
+  };
+
+  const uploadImage = async (uri, fileType) => {
+    if (!school || !classValue || !section || !image) {
+      Alert.alert('Error', 'Please fill in all fields and select an image');
+      return;
+    }
+
+    try {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const storageRef = ref(
+        storage,
+        'files/timetables/' + new Date().getTime(),
+      );
+      const uploadTask = uploadBytesResumable(storageRef, blob);
+      setModalVisible(true);
+      uploadTask.on(
+        'state_changed',
+        snapshot => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log('Upload is ' + progress + '% done');
+        },
+        error => {
+          console.log('Upload error:', error);
+          setModalVisible(false);
+        },
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          console.log('File available at', downloadURL);
+          await saveRecord(fileType, downloadURL, new Date().toISOString());
+          // Save the record to the database
+          await addDoc(collection(db, 'files'), {
+            fileType: 'image',
+            url: downloadURL,
+            createdAt: new Date().toISOString(),
+          });
+
+          let params = {
+            clas: classValue.value,
+            section: section.value,
+            school: school.value,
+            timetableUrl: downloadURL,
+          };
+
+          postData(timetableURL, params)
+            .then(responseData => {
+              console.log('Response data:', responseData);
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
+
+          setImage('');
+          setModalVisible(false);
+          // if (image.uri !== '') {
+          //   setModalVisible(true);
+          // } else {
+          //   setModalVisible(false);
+          // }
+        },
+      );
+      // try{
+    
+      //}catch(err){
+      //   console.log("=========>>>>>>get failed at upload")
+      // }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      setModalVisible(false);
+    }
+  
+  };
+
+  async function saveRecord(fileType, url, createdAt) {
+    try {
+      const docRef = await addDoc(collection(db, 'files'), {
+        fileType,
+        url,
+        createdAt,
+      });
+      console.log('document saved correctly', docRef.id);
+      setSchool({...school, value: ''});
+      setClassValue({...classValue, value: ''});
+      setSection({...section, value: ''});
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  // const effect_togetTimetable = () => {
+  //   dispatch(getTimetables());
+  //   console.log('dispatched');
+  //   setTimetables(timetableData);
+  // };
+
+  const effect_togetTimetable = () => {
+    return new Promise((resolve, reject) => {
+      dispatch(getTimetables());
+      console.log('dispatched');
+      setTimetables(timetableData);
+      
+      // Assuming you have some logic to determine success or failure of dispatch
+      // For example, if getTimetables returns a promise, you can listen for its resolution
+      // or if it's synchronous, you can assume success for simplicity
+      // You should replace this with actual logic based on your application requirements
+      
+      // For demonstration, let's assume getTimetables returns a promise
+      dispatch(getTimetables()).then(() => {
+        resolve(); // Resolve the promise if dispatch is successful
+      }).catch(error => {
+        reject(error); // Reject the promise if dispatch fails
+      });
+    });
   };
   const renderOptionsContent = () => {
     switch (selectedOption) {
       case 'Option 1':
         return (
-          <ScrollView contentContainerStyle={styles.timeTableListView}>
-            {timetables.map(timetable => (
-              <View key={timetable._id} style={styles.timetableImageView}>
+          <>
+            <View
+              style={{
+                justifyContent: 'space-between',
+                flexDirection: 'row',
+                backgroundColor: 'your_color', // Add your color here
+                position: 'relative',
+                top: 0,
+                height: 30,
+              }}>
+              <TouchableOpacity
+                style={{marginHorizontal: 10, justifyContent: 'center'}}
+                onPress={() => effect_togetTimetable()}>
+                <Icon size={20} name="refresh" style={{color:colors.darkColor}}/>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{marginHorizontal: 10, justifyContent: 'center'}}>
+                <Icon size={20} name="filter-menu-outline" />
+              </TouchableOpacity>
+            </View>
+            <ScrollView contentContainerStyle={styles.timeTableListView}>
+              {timetables.map(timetable => (
                 <TouchableOpacity
-                  style={{
-                    position: 'absolute',
-                    top: 5,
-                    left: 5,
-                    borderWidth: 1,
-                    zIndex: 1,
-                    alignSelf: 'flex-end',
-                    backgroundColor: colors.baseGray05,
-                  }}
-                  onPress={() => clickOpenTimeTableImage(item)}
-                  onLongPress={() => handleOnLongPress(timetable.id)}>
-                  <Icon name="check" />
+                  key={timetable._id}
+                  style={styles.timetableImageView}
+                  onPress={() => handlePress(timetable._id)}
+                  onLongPress={() => handleOnLongPress(timetable._id)}>
+                  {selectItem.select && (
+                    <View style={styles.cancel_Check_Btns}>
+                      <Icon
+                        name={
+                          selectItem.selectedItemId.includes(timetable._id)
+                            ? 'checkbox-marked'
+                            : 'checkbox-blank-outline'
+                        }
+                      />
+                    </View>
+                  )}
+                  <Text
+                    style={
+                      styles.timetableInfo
+                    }>{`${timetable.clas} - ${timetable.section}`}</Text>
+                  <Image
+                    source={{uri: timetable.timetableUrl}}
+                    style={styles.timeTableListImg}
+                  />
                 </TouchableOpacity>
-                <Text
-                  style={
-                    styles.timetableInfo
-                  }>{`${timetable.clas} - ${timetable.section}`}</Text>
-                <Image
-                  source={{uri: timetable.timetableUrl}}
-                  style={styles.timeTableListImg}
-                />
-              </View>
-            ))}
-          </ScrollView>
+              ))}
+            </ScrollView>
+            {selectItem.select && (
+              <TouchableOpacity
+                style={{
+                  padding: 10,
+                  backgroundColor: 'red',
+                  alignItems: 'center',
+                }}
+                onPress={handleDelete}>
+                <Text style={{color: 'white'}}>Delete</Text>
+              </TouchableOpacity>
+            )}
+          </>
         );
       case 'Option 2':
         return (
@@ -296,12 +536,48 @@ const TimeTable = ({navigation}) => {
               errorLabel={section.errorMessage}
               style={styles.timeTableInput}
             />
-            {/* {image && <Image style={{height:150,width:150}} source={{uri:image}}/>} */}
-            <TouchableOpacity
-              style={styles.timetableUploadBtn}
-              onPress={ImagePicker}>
-              <Text style={{color: colors.primaryColor}}>Upload</Text>
-            </TouchableOpacity>
+
+            {image === '' ? (
+              <TouchableOpacity
+                style={styles.timetableUploadBtn}
+                onPress={pickImage}>
+                <Text style={{color: colors.primaryColor}}>Pick Image</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={styles.timetableUploadBtn}
+                onPress={() => uploadImage(image.uri, 'image')}>
+                <Text style={{color: colors.primaryColor}}>Upload Image</Text>
+              </TouchableOpacity>
+            )}
+            {image && (
+              <View
+                style={{
+                  borderWidth: 1,
+                  alignSelf: 'center',
+                  marginVertical: 20,
+                }}>
+                <TouchableOpacity
+                  onPress={() => setImage('')}
+                  style={styles.cancel_Check_Btns}>
+                  <Icon
+                    name="close"
+                    size={18}
+                    style={{backgroundColor: colors.baseGray05}}
+                  />
+                </TouchableOpacity>
+                <Image
+                  style={{
+                    marginVertical: 30,
+                    height: 300,
+                    width: 300,
+                    resizeMode: 'contain',
+                    alignSelf: 'center',
+                  }}
+                  source={{uri: image.uri}}
+                />
+              </View>
+            )}
           </ScrollView>
         );
 
@@ -310,147 +586,16 @@ const TimeTable = ({navigation}) => {
     }
   };
 
-  const ImagePicker = () => {
-    if (
-      (school.value !== '' &&
-        school.errorActive === false &&
-        classValue.value !== '' &&
-        classValue.errorActive === false,
-      section.value !== '' && section.errorActive === false)
-    ) {
-      let options = {
-        mediaType: 'photo',
-        maxWidth: 800,
-        maxHeight: 800,
-        quality: 1,
-        allowsEditing: true,
-        aspect: [3, 4],
-      };
-
-      launchImageLibrary(options, async response => {
-        try {
-          if (response.didCancel) {
-            console.log('User cancelled image picker');
-          } else if (response.error) {
-            console.log('ImagePicker Error: ', response.error);
-          } else if (!response.didCancel) {
-            // Ensure there's at least one selected asset
-            const selectedImage = response.assets[0];
-            setImage({uri: selectedImage.uri});
-            saveImage(selectedImage.uri);
-            await uploadImage(selectedImage.uri, 'image');
-          } else {
-            console.log('No image selected');
-          }
-
-          if (image.uri != '') {
-            setModalVisible(true);
-          } else {
-            setModalVisible(false);
-          }
-        } catch (error) {
-          console.log('Error selecting image:', error);
-        }
-      });
-    } else {
-      Alert.alert('Error', 'Please fill in all fields');
-    }
-  };
-
-  const saveImage = async uri => {
-    try {
-      if (!uri) {
-        console.log('Error: URI is undefined');
-        return;
-      }
-      const fileName = uri.split('/').pop();
-      const destPath = `${RNFS.DocumentDirectoryPath}/${fileName}`;
-      const docRef = await addDoc(collection(db, 'files'), {
-        fileType,
-        url,
-        createdAt,
-      });
-      console.log('document saved correctly', docRef.id);
-      await RNFS.copyFile(uri, destPath);
-      console.log('Image saved successfully:', destPath);
-    } catch (error) {
-      console.log('Error saving image:', error);
-    }
-  };
-
-  const uploadImage = async (uri, fileType) => {
-    if (!school.value || !classValue.value || !section.value) {
-      Alert.alert('Error', 'Please fill in all fields');
-      return;
-    }
-    try {
-      const response = await fetch(uri);
-      console.log(response);
-      const blob = await response.blob();
-      const storageRef = ref(
-        storage,
-        'files/timetables/' + new Date().getTime(),
-      );
-      const uploadTask = uploadBytesResumable(storageRef, blob);
-
-      uploadTask.on(
-        'state_changed',
-        snapshot => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 10;
-          console.log('Upload is ' + progress + '% done');
-          setProgress(progress);
-        },
-        error => {
-          console.log(error, '==>error');
-        },
-        async () => {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-
-          console.log('File available at', downloadURL);
-          // Save the record to the database
-          await saveRecord(fileType, downloadURL, new Date().toISOString());
-          let params = {
-            clas: classValue.value,
-            section: section.value,
-            school: school.value,
-            timetableUrl: downloadURL,
-          };
-          postData(timetableURL, params)
-            .then(responseData => {
-              console.log('Response data:', responseData);
-            })
-            .catch(error => {
-              console.error('Error:', error);
-            });
-          setImage('');
-        },
-      );
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      // Handle error here
-    }
-  };
-
-  async function saveRecord(fileType, url, createdAt) {
-    try {
-      const docRef = await addDoc(collection(db, 'files'), {
-        fileType,
-        url,
-        createdAt,
-      });
-      console.log('document saved correctly', docRef.id);
-      setSchool({...school, value: ''});
-      setClassValue({...classValue, value: ''});
-      setSection({...section, value: ''});
-    } catch (e) {
-      console.log(e);
-    }
-  }
 
   useEffect(() => {
-    fetchTimetables();
-  }, []);
+    effect_togetTimetable()
+    .then(() => {
+      console.log('Timetables fetched successfully');
+    })
+    .catch(error => {
+      console.error('Error fetching timetables:', error);
+    });
+  }, [dispatch]);
   return (
     <View style={{flex: 1, backgroundColor: colors.primaryColor}}>
       <TopBar

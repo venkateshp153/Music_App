@@ -1,57 +1,5 @@
-// import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-// import {API} from '../../api';
-
-// const initialState = {
-//   userData: null,
-//   isLoading: false,
-//   isSuccess: false,
-//   isError: false,
-// };
-
-// export const signin = createAsyncThunk('signin', async (params, thunkApi) => {
-//   console.log('file AuthSlice.js - signin params:', params);
-//   try {
-//     const response = await API.post('/signin', params);
-//     return response.data;
-//   } catch (error) {
-//     console.log('file AuthSlice', error);
-//     return thunkApi.rejectWithValue(error);
-//   }
-// });
-
-// export const getTimetable = createAsyncThunk('getTimetable', async (_, thunkApi) => {
-//   try {
-//     const response = await API.get('/timetable'); 
-//     return response.data;
-//   } catch (error) {
-//     console.log('file AuthSlice', error);
-//     return thunkApi.rejectWithValue(error);
-//   }
-// });
-
-// const AuthSlice = createSlice({
-//   name: 'authSlice',
-//   initialState,
-//   reducers: {},
-//   extraReducers: builder => {
-//     builder.addCase(signin.pending, state => {
-//       state.isLoading = true;
-//     });
-//     builder.addCase(signin.fulfilled, (state, action) => {
-//       state.isLoading = false;
-//       state.isSuccess = true;
-//       state.userData = action.payload;
-//     });
-//     builder.addCase(signin.rejected, (state, action) => {
-//       state.isLoading = false;
-//       state.isError = true;
-//     });
-//   },
-// });
-
-// export default AuthSlice.reducer;
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { API } from '../../api';
+import { API, getData, postRequest } from '../../api';
 
 // Initial state for authentication slice
 const authInitialState = {
@@ -59,6 +7,7 @@ const authInitialState = {
   isLoading: false,
   isSuccess: false,
   isError: false,
+  errorMessage: '',
 };
 
 // Initial state for timetable slice
@@ -69,25 +18,26 @@ const timetableInitialState = {
   isError: false,
 };
 
-export const signin = createAsyncThunk('auth/signin', async (params, thunkApi) => {
-  console.log('file AuthSlice.js - signin params:', params);
-  try {
-    const response = await API.post('/signin', params);
-    return response.data;
-  } catch (error) {
-    console.error('Error in signin:', error);
-    throw error;
-  }
-});
 
-export const getTimetables = createAsyncThunk('timetables/getTimetables', async (_, thunkApi) => {
+export const signin = createAsyncThunk('/auth/signin', async (params, thunkApi) => {
   try {
-    const response = await API.get('/timetables');
-    console.log(">>>>>>", response.data.data);
-    return response.data.data; // Return the correct data
+    const response = await postRequest('/auth/signin', params);
+    console.log("''''''''",response)
+    return response;
   } catch (error) {
-    console.error('Error in getTimetable:', error);
-    throw error;
+    return thunkApi.rejectWithValue(error.response.data);
+  }
+}); 
+
+export const getTimetables = createAsyncThunk('/timetables', async (_, thunkApi) => {
+  try {
+    const response = await getData('/timetables');
+    console.log(response,"------")
+    return response;
+  } catch (error) {
+    console.log(error)
+    // Handling the error using thunkApi.rejectWithValue for consistency
+    return thunkApi.rejectWithValue(error.response ? error.response.data : error.message);
   }
 });
 

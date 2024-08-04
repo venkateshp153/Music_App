@@ -1,10 +1,4 @@
-import axios from "axios";
-import { BASE_URL } from "../../env";
-export const API = axios.create({
-    baseURL:BASE_URL,
-});""
-// export const baseURL =  "http://192.168.1.3:8080/api"
-export const timetableURL = `${BASE_URL}/timetables`
+
 
 export async function postData(url, data) {
     try {
@@ -27,27 +21,36 @@ export async function postData(url, data) {
       throw error;
     }
   }
-  export async function getData(url) {
-    try {
-      const response = await fetch(url);
+  export function getData(url) {
+    const fullUrl = `${process.env.BASE_URL}${url}`;
+    console.log('Fetching URL:', fullUrl);
   
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-  
-      const responseData = await response.json();
-      return responseData;
-    } catch (error) {
-      console.error('There was a problem with the fetch operation:', error);
-      throw error;
-    }
+    return fetch(fullUrl)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then(responseData => {
+        // Optional: Validate responseData structure
+        if (!responseData || typeof responseData !== 'object') {
+          throw new Error('Unexpected response format');
+        }
+        return responseData;
+      })
+      .catch(error => {
+        console.error('There was a problem with the fetch operation:', error.message);
+        throw error;
+      });
   }
+  
   
 
   export async function deleteTimetablesById(ids) {
     try {
       const deletePromises = ids.map(async (id) => {
-        const response = await fetch(`http://192.168.1.3:8080/api/timetables/${id}`, {
+        const response = await fetch(`${process.env.BASE_URL}/timetables/${id}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json'
@@ -66,6 +69,31 @@ export async function postData(url, data) {
       throw error; // Throw the error to handle it in the caller function
     }
 }
+
+export const postRequest = async (url, data, headers = {}) => {
+  try {
+    const response = await fetch(`${process.env.BASE_URL}${url}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status}`);
+    }
+
+    const responseData = await response.json();
+    console.log("====////",responseData)
+    return responseData;
+  } catch (error) {
+    console.error('POST request error:', error);
+    throw error;
+  }
+};
+
 
 
   

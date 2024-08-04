@@ -7,7 +7,7 @@ import {colors} from "../styles/colors";
 import AppInput from "../components/AppInput";
 import AppButton from "../components/AppButton";
 
-import { BASE_URL } from "../../env";
+
 const SignUp = ({navigation}) => {
   const [username, setUsername] = useState({
     value: "",
@@ -59,49 +59,56 @@ const SignUp = ({navigation}) => {
     }
   }
 
-
   const handleSignUp = async () => {
     let bodyObj = {
-      "username":username.value,
-      "email":email.value,
-      "password":password.value,
-      "phone":phone.value,
+      "username": username.value,
+      "email": email.value,
+      "password": password.value,
+      "phone": phone.value,
     }
-    
-
+  
     if (!username.value || !email.value || !phone.value || !password.value || !cPassword.value) {
       Alert.alert("Error", "Please fill in all fields");
       return;
     }
-
+  
     if (password.value !== cPassword.value) {
       Alert.alert("Error", "Passwords do not match");
       return;
     }
-   console.log(bodyObj)
+    
+    console.log(bodyObj)
     try {
-      const response = await fetch(`${BASE_URL}/signup`, {
+      const response = await fetch(`${process.env.BASE_URL}/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(bodyObj),
       });
-
+  
       const data = await response.json();
-      console.log(data)
-      if (data.success) {
+      console.log(response);
+      console.log(data);
+  
+      if (response.ok) {
         // Signup successful
         Alert.alert("Success", "Signup successful!");
+        navigation.navigate("SignIn");
       } else {
         // Signup failed
-        Alert.alert("Error");
+        Alert.alert("Error", data.message || "Signup failed");
       }
     } catch (error) {
       console.error("Error signing up:", error);
-      Alert.alert("Error", "Something went wrong.");
+      if (error.message === 'Network request failed') {
+        Alert.alert("Error", "Network request failed. Please check your internet connection and try again.");
+      } else {
+        Alert.alert("Error", "Something went wrong.");
+      }
     }
   };
+  
 
   return (
     <KeyboardAvoidingContainer>

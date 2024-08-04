@@ -1,7 +1,6 @@
 import {StyleSheet} from 'react-native';
 import {colors} from './colors';
 import {size} from './sizes';
-import {timetableURL} from '../api';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -278,11 +277,11 @@ export const styles = StyleSheet.create({
   },
   segmentDataView: {
     width: '100%',
-    flex: 0.65,
+    flex: 0.8,
     borderBottomStartRadius: 10,
     borderBottomEndRadius: 10,
     borderWidth: 1,
-    borderColor: colors.headerColor,
+    borderColor: colors.baseGray05,
   },
   timeTableView: {
     flex: 1,
@@ -321,7 +320,8 @@ export const styles = StyleSheet.create({
     resizeMode: 'cover',    
   },
   timetableImageView: {
-    borderWidth: 1,
+    borderColor:colors.baseGray05,
+    borderWidth:1,
     margin:5,
     marginVertical:5,
     width: 100,

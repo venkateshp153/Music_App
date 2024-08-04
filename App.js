@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 function App(){
 
   const {userData} = useSelector(state => state.auth);
-  console.log("---->> userData",userData)
+  console.log(JSON.stringify(userData),"=====>>>")
   return (
     <NavigationContainer>
       {userData ? <DrawerNav /> : <AuthStack />}

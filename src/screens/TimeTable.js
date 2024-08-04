@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect,useRef} from 'react';
 import {
   View,
   TouchableOpacity,
@@ -6,6 +6,7 @@ import {
   Text,
   ScrollView,
   Alert,
+  Keyboard,
 } from 'react-native';
 import {styles} from '../styles/styles';
 import TopBar from '../components/TopBar';
@@ -20,18 +21,17 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {storage, db} from '../assets/utility/firebaseConfig';
 import AppInput from '../components/AppInput';
 import {obj} from '../assets/utility/obj';
-import {deleteTimetable, postData, timetableURL, getData, deleteTimetablesById} from '../api';
+import {deleteTimetablesById, postRequest} from '../api';
 import {useDispatch, useSelector} from 'react-redux';
 import {size} from '../styles/sizes';
 import {getTimetables} from '../redux/features/AuthSlice';
+
 
 const TimeTable = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [image, setImage] = useState('');
   const [progress, setProgress] = useState(0);
-  const [timetables, setTimetables] = useState([]);
   const [isFocused, setIsFocused] = useState(false);
-  const [selectedItems, setSelectedItems] = useState([]);
   const dispatch = useDispatch();
   const {timetableData} = useSelector(state => state.timetables);
   const [school, setSchool] = useState({
@@ -61,7 +61,7 @@ const TimeTable = ({navigation}) => {
     select: false,
     selectedItemId: [],
   });
-
+  const scrollViewRef = useRef(null);
   const handleOnLongPress = id => {
     if (!selectItem.select) {
       setSelectItem({
@@ -101,7 +101,7 @@ const TimeTable = ({navigation}) => {
               const deletedItems = await Promise.all(
                 selectItem.selectedItemId.map(async id => {
                   console.log(id);
-                  return deleteTimetablesById([id]); // Ensure id is passed as an array
+                  return deleteTimetablesById([id]); 
                 }),
               );
               console.log('Deleted items:', deletedItems);
@@ -109,19 +109,24 @@ const TimeTable = ({navigation}) => {
                 select: false,
                 selectedItemId: [],
               });
-              effect_togetTimetable()
+              effect_togetTimetable();
             } catch (err) {
               console.log('error', err);
             }
           },
         },
       ],
-      { cancelable: false },
+      {cancelable: false},
     );
   };
-  
+const handleCancel = () => {
+  setSelectItem({
+    select: false,
+    selectedItemId: [],
+  });
+}
   const handleOptionClick = option => {
-    effect_togetTimetable()
+    // effect_togetTimetable()
     setSelectedOption(option);
     setSegBtnColor(option);
   };
@@ -271,7 +276,11 @@ const TimeTable = ({navigation}) => {
       allowsEditing: true,
       aspect: [3, 4],
     };
-
+    
+      if (classValue.value === '' && section.value === "" && school.value==="") {
+        Alert.alert('Input Required', 'Please fill in the input before selecting an image.');
+        return;
+      }
     launchImageLibrary(options, async response => {
       try {
         if (response.didCancel) {
@@ -306,13 +315,12 @@ const TimeTable = ({navigation}) => {
       console.log('Error saving image:', error);
     }
   };
-
   const uploadImage = async (uri, fileType) => {
     if (!school || !classValue || !section || !image) {
       Alert.alert('Error', 'Please fill in all fields and select an image');
       return;
     }
-
+  
     try {
       const response = await fetch(uri);
       const blob = await response.blob();
@@ -322,12 +330,25 @@ const TimeTable = ({navigation}) => {
       );
       const uploadTask = uploadBytesResumable(storageRef, blob);
       setModalVisible(true);
+  
+      // Track the last progress logged to avoid redundant logs
+      let lastLoggedProgress = 0;
+  
       uploadTask.on(
         'state_changed',
         snapshot => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log('Upload is ' + progress + '% done');
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          const roundedProgress = Math.round(progress);
+  
+          // Log progress only if it has changed significantly
+          if (roundedProgress > lastLoggedProgress) {
+            lastLoggedProgress = roundedProgress;
+  
+            // Log with a slight delay to slow down the updates
+            setTimeout(() => {
+              console.log('Upload is ' + lastLoggedProgress + '% done');
+            }, 100); // Adjust delay as needed
+          }
         },
         error => {
           console.log('Upload error:', error);
@@ -336,6 +357,20 @@ const TimeTable = ({navigation}) => {
         async () => {
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
           console.log('File available at', downloadURL);
+  
+          let params = {
+            clas: classValue.value,
+            imageUrl: downloadURL,
+            schoolName: school.value,
+            section: section.value,
+          };
+          await postRequest('/timetables', params)
+            .then(responseData => {
+              console.log('Response data:', responseData);
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
           await saveRecord(fileType, downloadURL, new Date().toISOString());
           // Save the record to the database
           await addDoc(collection(db, 'files'), {
@@ -343,43 +378,16 @@ const TimeTable = ({navigation}) => {
             url: downloadURL,
             createdAt: new Date().toISOString(),
           });
-
-          let params = {
-            clas: classValue.value,
-            section: section.value,
-            school: school.value,
-            timetableUrl: downloadURL,
-          };
-
-          postData(timetableURL, params)
-            .then(responseData => {
-              console.log('Response data:', responseData);
-            })
-            .catch(error => {
-              console.error('Error:', error);
-            });
-
           setImage('');
           setModalVisible(false);
-          // if (image.uri !== '') {
-          //   setModalVisible(true);
-          // } else {
-          //   setModalVisible(false);
-          // }
         },
       );
-      // try{
-    
-      //}catch(err){
-      //   console.log("=========>>>>>>get failed at upload")
-      // }
     } catch (error) {
       console.error('Error uploading image:', error);
       setModalVisible(false);
     }
-  
   };
-
+  
   async function saveRecord(fileType, url, createdAt) {
     try {
       const docRef = await addDoc(collection(db, 'files'), {
@@ -396,29 +404,25 @@ const TimeTable = ({navigation}) => {
     }
   }
 
-  // const effect_togetTimetable = () => {
-  //   dispatch(getTimetables());
-  //   console.log('dispatched');
-  //   setTimetables(timetableData);
-  // };
+
+
+  const scrollToEnd = () => {
+    Keyboard.dismiss()
+    scrollViewRef.current.scrollToEnd({ animated: true });
+  };
+
+
 
   const effect_togetTimetable = () => {
     return new Promise((resolve, reject) => {
-      dispatch(getTimetables());
-      console.log('dispatched');
-      setTimetables(timetableData);
-      
-      // Assuming you have some logic to determine success or failure of dispatch
-      // For example, if getTimetables returns a promise, you can listen for its resolution
-      // or if it's synchronous, you can assume success for simplicity
-      // You should replace this with actual logic based on your application requirements
-      
-      // For demonstration, let's assume getTimetables returns a promise
-      dispatch(getTimetables()).then(() => {
-        resolve(); // Resolve the promise if dispatch is successful
-      }).catch(error => {
-        reject(error); // Reject the promise if dispatch fails
-      });
+      dispatch(getTimetables())
+        .then(() => {
+          console.log('dispatched');
+          resolve(); // Resolve the promise if dispatch is successful
+        })
+        .catch(error => {
+          reject(error); // Reject the promise if dispatch fails
+        });
     });
   };
   const renderOptionsContent = () => {
@@ -430,7 +434,7 @@ const TimeTable = ({navigation}) => {
               style={{
                 justifyContent: 'space-between',
                 flexDirection: 'row',
-                backgroundColor: 'your_color', // Add your color here
+                backgroundColor: '#EEEEEE',
                 position: 'relative',
                 top: 0,
                 height: 30,
@@ -438,15 +442,19 @@ const TimeTable = ({navigation}) => {
               <TouchableOpacity
                 style={{marginHorizontal: 10, justifyContent: 'center'}}
                 onPress={() => effect_togetTimetable()}>
-                <Icon size={20} name="refresh" style={{color:colors.darkColor}}/>
+                <Icon
+                  size={20}
+                  name="refresh"
+                  style={{color: colors.darkColor}}
+                />
               </TouchableOpacity>
               <TouchableOpacity
                 style={{marginHorizontal: 10, justifyContent: 'center'}}>
                 <Icon size={20} name="filter-menu-outline" />
               </TouchableOpacity>
             </View>
-            <ScrollView contentContainerStyle={styles.timeTableListView}>
-              {timetables.map(timetable => (
+            {timetableData?<ScrollView contentContainerStyle={styles.timeTableListView}>
+              {timetableData.map(timetable => (
                 <TouchableOpacity
                   key={timetable._id}
                   style={styles.timetableImageView}
@@ -468,28 +476,55 @@ const TimeTable = ({navigation}) => {
                       styles.timetableInfo
                     }>{`${timetable.clas} - ${timetable.section}`}</Text>
                   <Image
-                    source={{uri: timetable.timetableUrl}}
+                    source={{uri: timetable.imageUrl}}
                     style={styles.timeTableListImg}
                   />
                 </TouchableOpacity>
               ))}
-            </ScrollView>
+            </ScrollView>:<></>}
             {selectItem.select && (
-              <TouchableOpacity
-                style={{
-                  padding: 10,
-                  backgroundColor: 'red',
-                  alignItems: 'center',
-                }}
-                onPress={handleDelete}>
-                <Text style={{color: 'white'}}>Delete</Text>
-              </TouchableOpacity>
+              <View style={{height:30,width:"100%",position:"relative",flexDirection:"row",alignSelf:"flex-end",justifyContent:"space-evenly"}}>
+                <TouchableOpacity
+                  style={{
+                    // padding: 10,
+                    width: 30,
+                    alignSelf: 'center',
+                    alignItems: 'center',
+                  }}
+                  onPress={handleDelete}>
+                  <Image
+                    source={require('../assets/images/bin.png')}
+                    style={{
+                      width: 25,
+                      height: 25,
+                    }}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    // padding: 10,
+                    width: 30,
+                    alignSelf: 'center',
+                    alignItems: 'center',
+                  }}
+                  onPress={handleCancel}>
+                 
+               
+                  <Image
+                    source={require('../assets/images/cross.png')}
+                    style={{
+                      width: 30,
+                      height: 30,
+                    }}
+                  />
+                </TouchableOpacity>
+              </View>
             )}
           </>
         );
       case 'Option 2':
         return (
-          <ScrollView>
+           <ScrollView ref={scrollViewRef}>
             <Text
               style={{
                 marginVertical: 12,
@@ -516,6 +551,7 @@ const TimeTable = ({navigation}) => {
               label="Enter Class"
               showLabel={true}
               showBorder={true}
+              editable={image.uri?false:true}
               activeBorder={classValue.errorActive && isFocused}
               value={classValue.value}
               onFocus={() => handleFocus()}
@@ -550,7 +586,8 @@ const TimeTable = ({navigation}) => {
                 <Text style={{color: colors.primaryColor}}>Upload Image</Text>
               </TouchableOpacity>
             )}
-            {image && (
+            {image.uri && scrollToEnd()}
+            {image &&  (
               <View
                 style={{
                   borderWidth: 1,
@@ -586,15 +623,15 @@ const TimeTable = ({navigation}) => {
     }
   };
 
-
   useEffect(() => {
+    console.log(process.env.BASE_URL);
     effect_togetTimetable()
-    .then(() => {
-      console.log('Timetables fetched successfully');
-    })
-    .catch(error => {
-      console.error('Error fetching timetables:', error);
-    });
+      .then(() => {
+        console.log('Timetables fetched successfully');
+      })
+      .catch(error => {
+        console.error('Error fetching timetables:', error);
+      });
   }, [dispatch]);
   return (
     <View style={{flex: 1, backgroundColor: colors.primaryColor}}>
@@ -602,7 +639,7 @@ const TimeTable = ({navigation}) => {
         onPress={() => navigation.openDrawer()}
         imageSource={require('../assets/images/schoolImg.jpg')}
       />
-      {image.uri && (
+      {image.uri &&(
         <CustomModal
           visible={modalVisible}
           closeModal={false}
@@ -611,7 +648,7 @@ const TimeTable = ({navigation}) => {
           }}
           component={
             <Uploading
-              image={image}
+              // image={image}
               progress={progress}
               close={() => {
                 setModalVisible(false);
@@ -634,7 +671,9 @@ const TimeTable = ({navigation}) => {
                     : colors.baseGray05,
               },
             ]}
-            onPress={() => handleOptionClick('Option 1')}>
+            onPress={() => {
+              handleOptionClick('Option 1'), effect_togetTimetable();
+            }}>
             <Text
               style={[
                 styles.segmentButtonText,

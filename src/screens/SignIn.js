@@ -21,13 +21,13 @@ import Splash from './Splash';
 
 const SignIn = ({navigation}) => {
   const [email, setEmail] = useState({
-    value: 'admin@gmail.com',
+    value: 'Venky@gmail.com',
     errorActive: false,
     errorMessage: '',
     verify: false,
   });
   const [password, setPassword] = useState({
-    value: 'Admin@123',
+    value: 'Venky@123',
     errorActive: false,
     errorMessage: '',
     verify: false,
@@ -35,7 +35,7 @@ const SignIn = ({navigation}) => {
   });
   const [isFocused, setIsFocused] = useState(false);
   const dispatch = useDispatch();
-  const {userData, isLoading} = useSelector(state => state.auth);
+  const { userData, isLoading, isError, errorMessage } = useSelector((state) => state.auth);
 
   const handleFocus = () => {
     setIsFocused(true);

@@ -104,3 +104,10 @@ export const holidays = [
   {id: 2, day: '25.12.2025', month: 'December', occation: 'Christmas'},
  
 ];
+
+export const validateInput = (value, regex, errorMsg) => {
+  return {
+    isValid: regex.test(value),
+    errorMessage: regex.test(value) ? '' : errorMsg,
+  };
+};
